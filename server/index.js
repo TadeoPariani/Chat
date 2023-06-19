@@ -13,13 +13,33 @@ const io = new socketServer(server, {
 });
 
 app.use(cors());
+let listaConected = []
 
 io.on('connection', (socket) => {
-  console.log('user conected, ' + 'id: ' + socket.id); 
+  listaConected.push(socket.id)
+  console.log('user conected, ' + 'id: ' + socket.id + "   lista:  " + listaConected); 
   socket.on("message", function (message) {
     console.log(message);
-    socket.broadcast.emit("message", message);
+    socket.broadcast.emit("message", {
+      body: message,
+      from: "Anon: "
+    });
   })
+  
+  socket.on("disconnect", function (message) {
+    for (let i = 0; i < listaConected.length; i++) {
+      if (listaConected[i] === socket.id) {
+        listaConected.splice(i, 1);
+        break;
+      }
+    }
+    message= `${socket.id} se ha desconectado...`
+    socket.broadcast.emit("userDisconnected", {
+      body: message
+    });
+    console.log("userDisconnected" + " id: " + socket.id + " lista: " + listaConected);
+  });
+
 });
 
 server.listen(PORT, () => {

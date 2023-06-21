@@ -16,8 +16,10 @@ app.use(cors());
 let listaConected = []
 
 io.on('connection', (socket) => {
+  
   listaConected.push(socket.id)
   console.log('user conected, ' + 'id: ' + socket.id + "   lista:  " + listaConected); 
+
   socket.on("message", function (message) {
     console.log(message);
     socket.broadcast.emit("message", {
@@ -25,7 +27,21 @@ io.on('connection', (socket) => {
       from: "Anon: "
     });
   })
-  
+
+  // Enviar la lista al cliente cuando se conecte
+  socket.emit('lista', listaConected);
+
+  socket.on('disconnect', () => {
+    console.log('El cliente se ha desconectado');
+  });
+
+  // socket.on("lista", function () {
+  //   console.log("ee");
+  //   socket.broadcast.emit("lista", {
+  //     body: lista,
+  //   });
+  // })
+
   socket.on("disconnect", function (message) {
     for (let i = 0; i < listaConected.length; i++) {
       if (listaConected[i] === socket.id) {
@@ -33,7 +49,7 @@ io.on('connection', (socket) => {
         break;
       }
     }
-    message= `${socket.id} se ha desconectado...`
+    message = `${socket.id} se ha desconectado...`
     socket.broadcast.emit("userDisconnected", {
       body: message
     });

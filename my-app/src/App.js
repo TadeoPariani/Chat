@@ -2,12 +2,13 @@ import React from 'react';
 import io from 'socket.io-client'
 import { useState, useEffect } from 'react';
 import "./styles.css"
-
 const socket = io('http://localhost:4000')
 
 const App = () => {
   const [message, setMessage] = useState("")
   const [messages, setMessages] = useState([])
+  const [lista, setLista] = useState([]);
+  
   
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -19,18 +20,22 @@ const App = () => {
     setMessages([...messages, newMessage])
     setMessage("")
   }
-
+  
   useEffect(() => {
     const receiveMessage = message =>{
       setMessages([ ...messages, message])
     }
     socket.on("message", receiveMessage)
 
+    socket.on('lista', (lista) => {
+      setLista(lista);
+    });
+
     return() => {
       socket.off("message", receiveMessage)
     }
   }, [messages])
-
+  
   return ( 
     <div className='form-container' id="root">
       <div class="chat-container">
@@ -47,6 +52,15 @@ const App = () => {
           <button class="form-submit-btn"> Enviar </button>
         </div>
       </form>
+
+      <div>
+      <h1>Lista:</h1>
+      <ul>
+        {lista.map((elemento, index) => (
+          <li key={index}>{elemento}</li>
+        ))}
+      </ul>
+    </div>
     </div>
   );
 };

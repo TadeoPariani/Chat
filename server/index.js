@@ -12,52 +12,62 @@ const io = new socketServer(server, {
   }
 });
 
+
 app.use(cors());
 let listaConected = []
 
+
+
+
+
 io.on('connection', (socket) => {
+
+  const generateRandomUsernames = () => {
+    const usernames = [];
+    const adjectives = ['Happy', 'Crazy', 'Silly', 'Funny', 'Clever', 'Brave', 'Kind', 'Charming', 'Witty', 'Lucky'];
+    const animals = ['Cat', 'Dog', 'Elephant', 'Lion', 'Monkey', 'Tiger', 'Giraffe', 'Penguin', 'Kangaroo', 'Zebra'];
   
-  listaConected.push(socket.id)
+    for (let i = 0; i < 1; i++) {
+      const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+      const animal = animals[Math.floor(Math.random() * animals.length)];
+      const username = `${adjective}${animal}`;
+      usernames.push(username);
+    }
+    return usernames;
+  };
+  
+  const username = generateRandomUsernames();
+
+  listaConected.push(username)
   console.log('user conected, ' + 'id: ' + socket.id + "   lista:  " + listaConected); 
 
   socket.on("message", function (message) {
     console.log(message);
     socket.broadcast.emit("message", {
       body: message,
-      from: "Anon: "
+      from: "> " + username + ": "
     });
   })
 
-  // Enviar la lista al cliente cuando se conecte
-  socket.emit('lista', listaConected);
-
-  socket.on('disconnect', () => {
-    console.log('El cliente se ha desconectado');
+  socket.once('join', () => {
+    io.emit('userList', listaConected, username);
   });
 
-  // socket.on("lista", function () {
-  //   console.log("ee");
-  //   socket.broadcast.emit("lista", {
-  //     body: lista,
-  //   });
-  // })
-
-  socket.on("disconnect", function (message) {
+  socket.once('disconnect', () => {
     for (let i = 0; i < listaConected.length; i++) {
-      if (listaConected[i] === socket.id) {
+      if (listaConected[i] === username) {
         listaConected.splice(i, 1);
+        socket.emit(listaConected)
+        console.log(listaConected)
         break;
       }
     }
-    message = `${socket.id} se ha desconectado...`
-    socket.broadcast.emit("userDisconnected", {
-      body: message
-    });
-    console.log("userDisconnected" + " id: " + socket.id + " lista: " + listaConected);
+    console.log('El cliente se ha desconectado');
+    io.emit('disconnected', listaConected, username);
   });
-
 });
 
 server.listen(PORT, () => {
   console.log('listening on *: ' + PORT); 
 });
+

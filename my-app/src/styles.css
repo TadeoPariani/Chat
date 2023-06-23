@@ -53,3 +53,17 @@ margin: 10px;
 border-bottom: 1px solid #ccc;
 background-color: rgb(133, 159, 189);
 }
+
+.disconnectMessage {
+    padding: 10px;
+    margin: 10px;
+    border-bottom: 1px solid #ccc;
+    background-color: rgb(192, 37, 17);
+}
+
+.connectMessage {
+    padding: 10px;
+    margin: 10px;
+    border-bottom: 1px solid #ccc;
+    background-color: rgb(38, 173, 90);
+}

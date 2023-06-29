@@ -11,7 +11,8 @@ const App = () => {
   const [userStatus, setUserStatus] = useState()
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState(null);
-  
+  const [isTyping, setIsTyping] = useState(false);
+
   const handleSubmit = (event) => {
     event.preventDefault()
     socket.emit("message", message)
@@ -20,7 +21,6 @@ const App = () => {
       from: "> Me:  "
     }
     setMessages([...messages, newMessage])
-    setMessage("")
   }
 
   useEffect(() => {
@@ -35,9 +35,10 @@ const App = () => {
 
   useEffect(() => {
     socket.emit('join', socket.id);
-    socket.on("userList", (users, username) => {
+    socket.on("userList", (users, username, mensajesAnteriores) => {
       setModalType('connected');
       setLista(users);
+      setMessages(mensajesAnteriores);
       setShowModal(true);
       setUserStatus(username)
       setTimeout(() => {
@@ -64,47 +65,50 @@ const App = () => {
   
   return ( 
     <div className='form-container' id="root">
-      <h1 id="root"> 4Chin </h1>
-      <div class="chat-container">
-        {messages.map((message,  index) => (
-          <div class="message" key={index}>
-            <p>{message.from} {message.body}</p>
-          </div>
-        ))}
-      </div>
-      <form  onSubmit={handleSubmit} >
-        <div className='form-field'>
-          <input type="text" onChange={ e => setMessage(e.target.value)} value={message}></input>
-          <button class="form-submit-btn"> Enviar </button>
-        </div>
-      </form>
-    <div>
-    {showModal && (
+      <div className='row'>
+        <h1 id="root"> 4Chin </h1>
+        {showModal && (
         <div>
           {modalType === 'connected' && (
             <div className='connectMessage'>
-              <p>El usuario {userStatus} se ha conectado.</p>
+              <p>Conectado: {userStatus}</p>
             </div>
           )}
           {modalType === 'disconnected' && (
             <div className='disconnectMessage'>
-            <p>El usuario {userStatus} se ha desconectado.</p>
+            <p>Desconectado {userStatus}</p>
           </div>
           )}
         </div>
       )}
-      <h1>Usuarios Conectados: </h1>
-      <ul>
-        {lista.map((user, index) => (
-          <li key={index}>{user}</li>
-        ))}
-      </ul>
+      </div>
+      <div className='row'>
+        <h3>Usuarios Conectados: </h3>
+        <ul>
+          {lista.map((user, index) => (
+            <li key={index}>{user}</li>
+          ))}
+        </ul>
+        <div class="chat-container">
+          {messages.map((message,  index) => (
+            <div class="message" key={index}>
+              <p>{message.from} : {message.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    <div>
+    <div>
+    </div>
+    <form onSubmit={handleSubmit} >
+          <div className='form-field'>
+            <input type="text" 
+            onChange={ e => setMessage(e.target.value)} value={message} setIsTyping={true}></input>
+            <button class="form-submit-btn"> Enviar </button>
+          </div>
+    </form>
     </div>
     </div>
   );
 };
-
 export default App;
-
-
-

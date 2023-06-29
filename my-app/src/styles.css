@@ -1,10 +1,16 @@
 .form-container {
-width: 600px;
+width: 1000px;
 margin: 20px auto;
 padding: 20px;
 background-color: #f5f5f5;
 border-radius: 5px;
 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    /* justify-content: space-between; */
 }
 
 .form-field {
@@ -40,11 +46,12 @@ background-color: #45a049;
 }
 
 .chat-container {
-width: 600px;
-height: 400px;
+width: 1000px;
+height: 500px;
 overflow-y: auto;
 border: 1px solid #ccc;
-border-radius: 5px;
+border-radius: 10px;
+margin-left: 40px;
 }
 
 .message {
@@ -55,14 +62,18 @@ background-color: rgb(133, 159, 189);
 }
 
 .disconnectMessage {
-    padding: 10px;
+    width: 300px;
+    height: 50px;
+    padding: 5px;
     margin: 10px;
     border-bottom: 1px solid #ccc;
     background-color: rgb(192, 37, 17);
 }
 
 .connectMessage {
-    padding: 10px;
+    width: 300px;
+    height: 50px;
+    padding: 2px;
     margin: 10px;
     border-bottom: 1px solid #ccc;
     background-color: rgb(38, 173, 90);

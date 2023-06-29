@@ -12,18 +12,14 @@ const io = new socketServer(server, {
   }
 });
 
-
 app.use(cors());
 let listaConected = []
-
-
-
-
+let mensajesAnteriores = []
 
 io.on('connection', (socket) => {
-
   const generateRandomUsernames = () => {
     const usernames = [];
+    
     const adjectives = ['Happy', 'Crazy', 'Silly', 'Funny', 'Clever', 'Brave', 'Kind', 'Charming', 'Witty', 'Lucky'];
     const animals = ['Cat', 'Dog', 'Elephant', 'Lion', 'Monkey', 'Tiger', 'Giraffe', 'Penguin', 'Kangaroo', 'Zebra'];
   
@@ -42,7 +38,8 @@ io.on('connection', (socket) => {
   console.log('user conected, ' + 'id: ' + socket.id + "   lista:  " + listaConected); 
 
   socket.on("message", function (message) {
-    console.log(message);
+    mensajesAnteriores.push({from: username, body: message});
+    console.log(mensajesAnteriores)
     socket.broadcast.emit("message", {
       body: message,
       from: "> " + username + ": "
@@ -50,7 +47,7 @@ io.on('connection', (socket) => {
   })
 
   socket.once('join', () => {
-    io.emit('userList', listaConected, username);
+    io.emit('userList', listaConected, username, mensajesAnteriores);
   });
 
   socket.once('disconnect', () => {

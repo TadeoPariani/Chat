@@ -9,10 +9,10 @@ const App = () => {
   const [messages, setMessages] = useState([])
   const [lista, setLista] = useState([]);
   const [userStatus, setUserStatus] = useState()
-  const [showModal, setShowModal] = useState(false);
-  const [modalType, setModalType] = useState(null);
-  const [isTyping, setIsTyping] = useState(false);
-
+  const [showModalConection, setShowModalConection] = useState(false);
+  const [modalTypeConection, setModalTypeConection] = useState(null);
+  const [showModalFull, setShowModalFull] = useState(false);
+  
   const handleSubmit = (event) => {
     event.preventDefault()
     socket.emit("message", message)
@@ -36,29 +36,39 @@ const App = () => {
   useEffect(() => {
     socket.emit('join', socket.id);
     socket.on("userList", (users, username, mensajesAnteriores) => {
-      setModalType('connected');
+      if (users.length > 3){
+        setShowModalFull(true)
+      }else{
+        setShowModalFull(false)
+      }
+      setModalTypeConection('connected');
       setLista(users);
       setMessages(mensajesAnteriores);
-      setShowModal(true);
+      setShowModalConection(true);
       setUserStatus(username)
       setTimeout(() => {
-        setShowModal(false);
+        setShowModalConection(false);
         setUserStatus('');
-        setModalType(null);
+        setModalTypeConection(null);
       }, 4000);
     });
   });
 
   useEffect(() => {
     socket.on("disconnected", (users, username) => {
-      setModalType('disconnected');
+      if (users.length > 3){
+        setShowModalFull(true)
+      }else{
+        setShowModalFull(false)
+      }
+      setModalTypeConection('disconnected');
       setLista(users);
-      setShowModal(true);
+      setShowModalConection(true);
       setUserStatus(username)
       setTimeout(() => {
-        setShowModal(false);
+        setShowModalConection(false);
         setUserStatus('');
-        setModalType(null);
+        setModalTypeConection(null);
       }, 4000);
     });
   });
@@ -66,15 +76,22 @@ const App = () => {
   return ( 
     <div className='form-container' id="root">
       <div className='row'>
+            {showModalFull && (
+              <div className='modal'>
+                <div className='modal-content'>
+                  <div>Hay mas de tres Usuarios Conectados</div>
+                </div>
+              </div>
+            )}
         <h1 id="root"> 4Chin </h1>
-        {showModal && (
+        {showModalConection && (
         <div>
-          {modalType === 'connected' && (
+          {modalTypeConection === 'connected' && (
             <div className='connectMessage'>
               <p>Conectado: {userStatus}</p>
             </div>
           )}
-          {modalType === 'disconnected' && (
+          {modalTypeConection === 'disconnected' && (
             <div className='disconnectMessage'>
             <p>Desconectado {userStatus}</p>
           </div>

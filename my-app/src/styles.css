@@ -78,3 +78,27 @@ background-color: rgb(133, 159, 189);
     border-bottom: 1px solid #ccc;
     background-color: rgb(38, 173, 90);
 }
+
+
+
+.modal {
+    position: fixed; 
+    z-index: 9999;
+    top: 1px;
+    bottom: 100px;
+    left: 180px;
+    right: 10px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background-color: #c05151;
+    width: 200px;
+    padding: 20px;
+    border-radius: 5px;
+    margin: 35px auto;
+    text-align: center;
+}
+
